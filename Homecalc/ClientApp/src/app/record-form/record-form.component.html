@@ -1,0 +1,133 @@
+<div class="row">
+    <button class="link" (click)="refresh()">
+        Обновить
+    </button>
+</div>
+<form class="row g-3 superform" novalidate #form="ngForm" (submit)="onSubmit(form)">
+    <input type="hidden" name="paymentDetailId" [value]="service.formData.id">
+    <hr>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label for="month">Месяц</label>
+            <select class="form-control" id="month" name="month" [(ngModel)]="service.formData.month">
+                <option *ngFor="let mon of monthList" [ngValue]="monthList.indexOf(mon)" [selected]="monthList.indexOf(mon) == currMonth">{{ mon }}</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="year">Год</label>
+            <select class="form-control" id="year" name="year" [(ngModel)]="service.formData.year">
+                <option *ngFor="let num of list" [ngValue]="num" [selected]="list.indexOf(num)+2015 == currYear">{{ num }}</option>
+            </select>
+        </div>
+    </div>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col" style="padding-left: 2%;">Показания счетчика</th>
+                <th scope="col" style="padding-left: 2%;">Прошлые показания</th>
+                <th scope="col" style="padding-left: 4%;">Тариф</th>
+                <th scope="col" style="padding-left: 4%;">Оплата</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Электричество</th>
+                <td><input class="form-control col-md-2" type="number" (input)="el1($event)" required name="electricityCount" [(ngModel)]="service.formData.electricityCount"></td>
+                <td><input class="form-control col-md-2" type="number" (input)="el2($event)" [value]="elCountPrev"></td>
+                <td><input class="form-control col-md-1" type="number" step=0.01 min=0.01 required (input)="el3($event)" name="electricityPrice" [(ngModel)]="service.formData.electricityPrice"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="(record.electricityCount-elCountPrev)*record.electricityPrice"></td>
+            </tr>
+            <tr>
+                <th scope="row">Вода горячая</th>
+                <td><input class="form-control col-md-2" type="number" (input)="waterHot1($event)" required name="waterHotCount" [(ngModel)]="service.formData.waterHotCount"></td>
+                <td><input class="form-control col-md-2" type="number" (input)="waterHot2($event)" [value]="waterHotCountPrev"></td>
+                <td><input class="form-control col-md-1" type="number" step=0.01 min=0.01 required (input)="waterHot3($event)" name="waterHotPrice" [(ngModel)]="service.formData.waterHotPrice"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="(record.waterHotCount-waterHotCountPrev)*record.waterHotPrice"></td>
+            </tr>
+            <tr>
+                <th scope="row">Водоотвод (горяч.)</th>
+                <td><input class="form-control col-md-2" type="number" (input)="waterHotDrainage1($event)" required name="waterHotDrainageCount" [(ngModel)]="service.formData.waterHotDrainageCount"></td>
+                <td><input class="form-control col-md-2" type="number" (input)="waterHotDrainage2($event)" [value]="waterHotDrainageCountPrev"></td>
+                <td><input class="form-control col-md-1" type="number" step=0.01 min=0.01 required (input)="waterHotDrainage3($event)" name="waterHotDrinagePrice" [(ngModel)]="service.formData.waterHotDrinagePrice"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="(record.waterHotDrainageCount-waterHotDrainageCountPrev)*record.waterHotDrinagePrice"></td>
+            </tr>
+            <tr>
+                <th scope="row">Вода холодная</th>
+                <td><input class="form-control col-md-2" type="number" (input)="waterCold1($event)" required name="waterColdCount" [(ngModel)]="service.formData.waterColdCount"></td>
+                <td><input class="form-control col-md-2" type="number" (input)="waterCold2($event)" [value]="waterColdCountPrev"></td>
+                <td><input class="form-control col-md-1" type="number" step=0.01 min=0.01 required (input)="waterCold3($event)" name="waterColdPrice" [(ngModel)]="service.formData.waterColdPrice"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="(record.waterColdCount-waterColdCountPrev)*record.waterColdPrice"></td>
+            </tr>
+            <tr>
+                <th scope="row">Отопление</th>
+                <td></td>
+                <td></td>
+                <td><input class="form-control col-md-1" type="number" step="0.01" required (input)="heat($event)" name="heatingPrice" [(ngModel)]="service.formData.heatingPrice"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="record.heatingPrice"></td>
+            </tr>
+            <tr>
+                <th scope="row">Домофон</th>
+                <td></td>
+                <td></td>
+                <td><input class="form-control col-md-1" type="number" step="0.01" required (input)="intercom($event)" name="intercomSysPrice" [(ngModel)]="service.formData.intercomSysPrice"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="record.intercomSysPrice"></td>
+            </tr>
+            <tr>
+                <th scope="row">ОСББ</th>
+                <td></td>
+                <td></td>
+                <td><input class="form-control col-md-1" type="number" step="0.01" required (input)="oSBBcalc($event)" name="osbb" [(ngModel)]="service.formData.osbb"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="record.osbb"></td>
+            </tr>
+            <tr>
+                <th scope="row">Вывоз мусора</th>
+                <td></td>
+                <td></td>
+                <td><input class="form-control col-md-1" type="number" step="0.01" required (input)="trash($event)" name="trashDeliver" [(ngModel)]="service.formData.trashDeliver"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="record.trashDeliver"></td>
+            </tr>
+            <tr>
+                <th scope="row">Триолан</th>
+                <td></td>
+                <td></td>
+                <td><input class="form-control col-md-1" type="number" step="0.01" required (input)="triolancalc($event)" name="triolan" [(ngModel)]="service.formData.triolan"></td>
+                <td><input class="form-control col-md-1" type="number" disabled [value]="record.triolan"></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col" style="padding-left: 2%;">Общая сумма</th>
+                <th scope="col" style="padding-left: 2%;">(Сумма оплат)</th>
+                <th scope="col" style="padding-left: 2%;" style="float: right;"><input class="form-control col-md-1" type="number" disabled [value]="total"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">За двоих</th>
+                <td>(2/3 суммы, Триолан 1/2)</td>
+                <td style="float: right;"><input class="form-control col-md-1" type="number" disabled [value]="zaDvoih"></td>
+            </tr>
+            <tr>
+                <th scope="row">К оплате</th>
+                <td>(2/3)</td>
+                <td style="float: right;"><input class="form-control col-md-1" type="number" disabled [value]="kOplate"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="col-12 h-100 align-items-center" style="margin-top: 2%; text-align: center;">
+        <select class="form-control" name="address" required [(ngModel)]="service.formData.address" [selectedIndex]="0">
+            <option>Каштанова</option>
+            <option>Маяковского</option>
+            <option>Мечникова</option>
+        </select>
+    </div>
+    <div class="col-12 h-100 align-items-center" style="margin-top: 2%;">
+        <button class="btn btn-primary" type="submit" style="width: 100%;" [disabled]="!form.valid">Запись</button>
+    </div>
+
+</form>
